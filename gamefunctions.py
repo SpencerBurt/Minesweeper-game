@@ -1,6 +1,13 @@
 import random
 
 class Functions:
+    """
+    Provides some of the utility functions for printing and interacting
+    with the gameboard.
+
+    At the moment, this class only contains the print_board function
+    and should not be instantiated.
+    """
     @staticmethod
     def print_board(board):
         for row in board.gameboard:
@@ -46,9 +53,7 @@ class Board:
         self.calculate_values()
 
     def create_bombs(self):
-        bomb_loc = Board.generate_bomb_loc(self.num_bomb, self.xdim, self.ydim)
-        global bomb_locations
-        bomb_locations = bomb_loc
+        Board.generate_bomb_loc(self.num_bomb, self.xdim, self.ydim)
         print(bomb_locations)
         for location in bomb_locations:
             self.gameboard[location[0]][location[1]] = Space(is_bomb = True)
@@ -71,12 +76,13 @@ class Board:
 
     @staticmethod
     def generate_bomb_loc(num_bomb, xdim, ydim):
-        bomb_locations = list()
+        bomb_loc = list()
         for i in range(num_bomb):
             xloc = random.randint(0, xdim-1)
             yloc = random.randint(0, ydim-1)
-            bomb_locations.append((yloc, xloc))
-        return bomb_locations
+            bomb_loc.append((yloc, xloc))
+        global bomb_locations
+        bomb_locations = bomb_loc
 
 def main():
     game_board = Board(xdim=10, ydim=10, num_bomb=3)
