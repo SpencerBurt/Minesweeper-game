@@ -63,7 +63,7 @@ class Space:
         if self.is_marked:
             return "M"
         elif self.is_hidden:
-            #return "*"
+            return "*"
         else:
             return str(self.value)
 
