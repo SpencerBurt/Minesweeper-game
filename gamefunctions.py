@@ -60,6 +60,11 @@ class Space:
             self.is_marked = True
 
     def __str__(self):
+        """
+        Defines string casting for the Space class.
+
+        Returns "M" if the space is marked, "*" if it is hidden, and the value of the space otherwise.
+        """
         if self.is_marked:
             return "M"
         elif self.is_hidden:
@@ -89,6 +94,9 @@ class Board:
         :param num_bomb: Gives the number of bombs on the board.
             (default is 2)
         :type num_bomb: int
+        :param gameboard: An empty list that will serve as a container for the spaces. 
+            (default is empty)
+        :type gameboard: list
         """
         self.xdim = xdim
         self.ydim = ydim
