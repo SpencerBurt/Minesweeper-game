@@ -46,24 +46,34 @@ class Board:
         self.calculate_values()
 
     def create_bombs(self):
-        bomb_locations = Board.generate_bomb_loc(self.num_bomb, self.xdim, self.ydim)
+        bomb_loc = Board.generate_bomb_loc(self.num_bomb, self.xdim, self.ydim)
+        global bomb_locations
+        bomb_locations = bomb_loc
+        print(bomb_locations)
         for location in bomb_locations:
             self.gameboard[location[0]][location[1]] = Space(is_bomb = True)
 
     def calculate_values(self):
-        x = 0
-        y = 0
-        for row in self.gameboard:
-            for space in row:
+        '''
+        for x in range(0, self.xdim):
+            for y in range(0, self.ydim):
                 for temp_y in range(y-1, y+1):
-                    #value = 0
-                    for temp_x in range(x-1, x+1):
-                        if (temp_x != -1) and (temp_y != -1) and (temp_x < self.xdim) and (temp_y < self.ydim):
-                            if self.gameboard[temp_y][temp_x].is_bomb:
-                                #value += 1
-                                space.value += 1
-                x +=1
-            y +=1
+                    if (temp_y >= 0) and (temp_y < self.ydim):
+                        for temp_x in range(x-1, x+1):
+                            if (temp_x >= 0) and (temp_x < self.xdim):
+                                if self.gameboard[temp_y][temp_x].is_bomb:
+                                    self.gameboard[y][x].value += 1'''
+        for location in bomb_locations:
+            '''
+            self.gameboard[location[0]+1][location[1]]      #same column, one row below
+            self.gameboard[location[0]-1][location[1]]      #same column, one row above
+            self.gameboard[location]'''
+            for y in range(-1,2):
+                if (location[0] + y != -1) and (location[0] + y != self.ydim):
+                    for x in range(-1,2):
+                        if (location[1] + x != -1) and (location[1] + x != self.xdim):
+                            self.gameboard[location[0]+y][location[1]+x].value +=1
+                    
 
     @staticmethod
     def create_board(board, xdim, ydim):
@@ -78,7 +88,7 @@ class Board:
         for i in range(num_bomb):
             xloc = random.randint(0, xdim-1)
             yloc = random.randint(0, ydim-1)
-            bomb_locations.append((xloc, yloc))
+            bomb_locations.append((yloc, xloc))
         return bomb_locations
 
 def main():
