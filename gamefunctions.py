@@ -54,20 +54,7 @@ class Board:
             self.gameboard[location[0]][location[1]] = Space(is_bomb = True)
 
     def calculate_values(self):
-        '''
-        for x in range(0, self.xdim):
-            for y in range(0, self.ydim):
-                for temp_y in range(y-1, y+1):
-                    if (temp_y >= 0) and (temp_y < self.ydim):
-                        for temp_x in range(x-1, x+1):
-                            if (temp_x >= 0) and (temp_x < self.xdim):
-                                if self.gameboard[temp_y][temp_x].is_bomb:
-                                    self.gameboard[y][x].value += 1'''
         for location in bomb_locations:
-            '''
-            self.gameboard[location[0]+1][location[1]]      #same column, one row below
-            self.gameboard[location[0]-1][location[1]]      #same column, one row above
-            self.gameboard[location]'''
             for y in range(-1,2):
                 if (location[0] + y != -1) and (location[0] + y != self.ydim):
                     for x in range(-1,2):
@@ -92,7 +79,7 @@ class Board:
         return bomb_locations
 
 def main():
-    game_board = Board()
+    game_board = Board(xdim=10, ydim=10, num_bomb=3)
     Functions.print_board(game_board)
 
 
