@@ -19,12 +19,7 @@ class Functions:
         """
         for row in board.gameboard:
             for space in row:
-                if space.is_bomb:
-                    print('b',end='')
-                elif space.is_marked:
-                    print('M', end='')
-                else:
-                    print(str(space.value), end='')
+                print(space, end="")
             print()
 
 
@@ -64,6 +59,14 @@ class Space:
         else:
             self.is_marked = True
 
+    def __str__(self):
+        if self.is_marked:
+            return "M"
+        elif self.is_hidden:
+            #return "*"
+        else:
+            return str(self.value)
+
 
 class Board:
     """
@@ -72,9 +75,9 @@ class Board:
 
     The board class is essentially a list of rows, each of which contains a set number of spaces.
     """
-    def __init__(self, xdim = 5, ydim = 5, num_bomb = 2):
+    def __init__(self, xdim = 5, ydim = 5, num_bomb = 2, gameboard = list()):
         """
-        Constructor for the Board class. Creates a global variable gameboard that is used as the board
+        Constructor for the Board class. Creates a variable gameboard that is used as the board
         throughout the class.
 
         :param xdim: Gives the x dimension of the board.
@@ -90,8 +93,7 @@ class Board:
         self.xdim = xdim
         self.ydim = ydim
         self.num_bomb = num_bomb
-        global gameboard
-        gameboard = list()
+        self.gameboard = gameboard
     
     def make_board(self):
         """
@@ -99,7 +101,7 @@ class Board:
 
         :return: void
         """
-        Board.create_board(gameboard, self.xdim, self.ydim)
+        Board.create_board(self.gameboard, self.xdim, self.ydim)
         self.create_bombs()
         self.calculate_values()
 
@@ -113,7 +115,7 @@ class Board:
         Board.generate_bomb_loc(self.num_bomb, self.xdim, self.ydim)
         print(bomb_locations)
         for location in bomb_locations:
-            gameboard[location[0]][location[1]] = Space(is_bomb = True)
+            self.gameboard[location[0]][location[1]] = Space(is_bomb = True)
 
     def calculate_values(self):
         """
@@ -126,7 +128,7 @@ class Board:
                 if (location[0] + y != -1) and (location[0] + y != self.ydim):
                     for x in range(-1,2):
                         if (location[1] + x != -1) and (location[1] + x != self.xdim):
-                            gameboard[location[0]+y][location[1]+x].value +=1        
+                            self.gameboard[location[0]+y][location[1]+x].value +=1        
 
     @staticmethod
     def create_board(board:list, xdim:int, ydim:int):
@@ -164,9 +166,11 @@ class Board:
             bomb_loc.append((yloc, xloc))
         global bomb_locations
         bomb_locations = bomb_loc
+    
 
 def main():
     game_board = Board(xdim=10, ydim=10, num_bomb=3)
+    game_board.make_board()
     Functions.print_board(game_board)
 
 
