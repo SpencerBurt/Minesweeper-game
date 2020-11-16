@@ -1,78 +1,4 @@
-import random
-
-class Functions:
-    """
-    Provides some of the utility functions for printing and interacting
-    with the gameboard.
-
-    At the moment, this class only contains the print_board function
-    and should not be instantiated.
-    """
-    @staticmethod
-    def print_board(board):
-        """
-        Prints the gameboard
-
-        :param board: The gameboard that will be printed
-        :type board: Board
-        :returns: void
-        """
-        for row in board.gameboard:
-            for space in row:
-                print(space, end="")
-            print()
-
-
-class Space:
-    """
-    Stores the value of a space as well as whether or not it is
-    marked, hidden, or a bomb.
-    """
-    def __init__(self, value = 0, is_marked = False, is_bomb = False, is_hidden = True):
-        """
-        Constructor for the Space class.
-
-        :param value: The value of the space
-        :type value: int
-        :param is_marked: Whether or not the space is marked
-        :type is_marked: bool
-        :param is_bomb: Whether or not the space is a bomb
-        :type is_bomb: bool
-        :param is_hidden: Whether or not the space is hidden
-        :type is_hidden: bool
-        """
-        self.value = value
-        self.is_marked = is_marked
-        self.is_bomb = is_bomb
-        self.is_hidden = is_hidden
-
-    @classmethod
-    def mark_space(self):
-        """
-        Marks a space.
-
-        If the space is already marked, this function will unmark it.
-        :return: void
-        """
-        if self.is_marked:
-            self.is_marked = False
-        else:
-            self.is_marked = True
-
-    def __str__(self):
-        """
-        Defines string casting for the Space class.
-
-        Returns "M" if the space is marked, "*" if it is hidden, and the value of the space otherwise.
-        """
-        if self.is_marked:
-            return "M"
-        elif self.is_hidden:
-            return "*"
-        else:
-            return str(self.value)
-
-
+import space, random
 class Board:
     """
     Defines the gameboard and numerous functions to define the value of each space
@@ -123,7 +49,7 @@ class Board:
         Board.generate_bomb_loc(self.num_bomb, self.xdim, self.ydim)
         print(bomb_locations)
         for location in bomb_locations:
-            self.gameboard[location[0]][location[1]] = Space(is_bomb = True)
+            self.gameboard[location[0]][location[1]] = space.Space(is_bomb = True)
 
     def calculate_values(self):
         """
@@ -136,7 +62,7 @@ class Board:
                 if (location[0] + y != -1) and (location[0] + y != self.ydim):
                     for x in range(-1,2):
                         if (location[1] + x != -1) and (location[1] + x != self.xdim):
-                            self.gameboard[location[0]+y][location[1]+x].value +=1        
+                            self.gameboard[location[0]+y][location[1]+x].value +=1
 
     @staticmethod
     def create_board(board:list, xdim:int, ydim:int):
@@ -151,9 +77,9 @@ class Board:
         :type ydim: int
         """
         for y in range(ydim):
-            board.append([Space()])
+            board.append([space.Space()])
             for x in range(xdim-1):
-                board[y].append(Space())
+                board[y].append(space.Space())
 
     @staticmethod
     def generate_bomb_loc(num_bomb, xdim, ydim):
@@ -174,13 +100,3 @@ class Board:
             bomb_loc.append((yloc, xloc))
         global bomb_locations
         bomb_locations = bomb_loc
-    
-
-def main():
-    game_board = Board(xdim=10, ydim=10, num_bomb=3)
-    game_board.make_board()
-    Functions.print_board(game_board)
-
-
-if __name__ == "__main__":
-    main()
