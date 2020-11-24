@@ -6,6 +6,8 @@ class Board:
 
     The board class is essentially a list of rows, each of which contains a set number of spaces.
     """
+    is_lost = False
+    is_won = False
     def __init__(self, xdim = 5, ydim = 5, num_bomb = 2, gameboard = list()):
         """
         Constructor for the Board class. Creates a variable gameboard that is used as the board
@@ -49,7 +51,7 @@ class Board:
         Board.generate_bomb_loc(self.num_bomb, self.xdim, self.ydim)
         print(bomb_locations)
         for location in bomb_locations:
-            self.gameboard[location[0]][location[1]] = space.Space(is_bomb = True)
+            self.gameboard[location[0]][location[1]] = space.Space(is_bomb = True, value = 9)
 
     def calculate_values(self):
         """
@@ -63,6 +65,17 @@ class Board:
                     for x in range(-1,2):
                         if (location[1] + x != -1) and (location[1] + x != self.xdim):
                             self.gameboard[location[0]+y][location[1]+x].value +=1
+    def mark_space(self, x_loc:int, y_loc:int):
+        """
+        Marks a space at the loction specified in the arguments
+
+        :param x_loc: The x location of the space
+        :type x_loc: int
+        :param y_loc: The y location of the space
+        :type y_loc: int
+        :return: void
+        """
+        self.gameboard[y_loc][x_loc].mark_space()
 
     @staticmethod
     def create_board(board:list, xdim:int, ydim:int):

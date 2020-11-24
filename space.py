@@ -3,6 +3,7 @@ class Space:
     Stores the value of a space as well as whether or not it is
     marked, hidden, or a bomb.
     """
+    is_marked = False
     def __init__(self, value = 0, is_marked = False, is_bomb = False, is_hidden = True):
         """
         Constructor for the Space class.
@@ -21,7 +22,6 @@ class Space:
         self.is_bomb = is_bomb
         self.is_hidden = is_hidden
 
-    @classmethod
     def mark_space(self):
         """
         Marks a space.
