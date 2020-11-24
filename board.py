@@ -107,9 +107,16 @@ class Board:
         :type ydim: int
         """
         bomb_loc = list()
-        for i in range(num_bomb):
+        while len(bomb_loc) < num_bomb:
             xloc = random.randint(0, xdim-1)
             yloc = random.randint(0, ydim-1)
-            bomb_loc.append((yloc, xloc))
+            new_loc = (yloc, xloc)
+            to_add = True
+            for location in bomb_loc:
+                if location == new_loc:
+                    to_add = False
+
+            if to_add:
+                bomb_loc.append((yloc, xloc))
         global bomb_locations
         bomb_locations = bomb_loc
