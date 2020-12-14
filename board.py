@@ -8,7 +8,7 @@ class Board:
     """
     is_lost = False
     is_won = False
-    def __init__(self, xdim = 5, ydim = 5, num_bomb = 2, gameboard = list()):
+    def __init__(self, xdim = 5, ydim = 5, num_bomb = 2):
         """
         Constructor for the Board class. Creates a variable gameboard that is used as the board
         throughout the class.
@@ -26,10 +26,9 @@ class Board:
             (default is empty)
         :type gameboard: list
         """
-        self.xdim = xdim
-        self.ydim = ydim
+        self.xdim, self.ydim = xdim, ydim
         self.num_bomb = num_bomb
-        self.gameboard = gameboard
+        self.gameboard = list()
     
     def make_board(self):
         """
@@ -51,7 +50,7 @@ class Board:
         Board.generate_bomb_loc(self.num_bomb, self.xdim, self.ydim)
         print(bomb_locations)
         for location in bomb_locations:
-            self.gameboard[location[0]][location[1]] = space.Space(is_bomb = True, value = 9)
+            self.gameboard[location[1] * self.xdim + location[0]] = space.Space(is_bomb = True, value = 9)
 
     def calculate_values(self):
         """
@@ -61,10 +60,11 @@ class Board:
         """
         for location in bomb_locations:
             for y in range(-1,2):
-                if (location[0] + y != -1) and (location[0] + y != self.ydim):
+                if (location[1] + y != -1) and (location[1] + y != self.ydim):
                     for x in range(-1,2):
-                        if (location[1] + x != -1) and (location[1] + x != self.xdim):
-                            self.gameboard[location[0]+y][location[1]+x].value +=1
+                        if (location[0] + x != -1) and (location[0] + x != self.xdim):
+                            self.gameboard[((location[1] + y) * self.xdim) + (location[0] + x)].value += 1
+    
     def mark_space(self, x_loc:int, y_loc:int):
         """
         Marks a space at the loction specified in the arguments
@@ -75,10 +75,10 @@ class Board:
         :type y_loc: int
         :return: void
         """
-        self.gameboard[y_loc][x_loc].mark_space()
+        self.gameboard[y_loc * self.xdim + x_loc].mark_space()
 
     @staticmethod
-    def create_board(board:list, xdim:int, ydim:int):
+    def create_board(gameboard:list, xdim:int, ydim:int):
         """
         Creates an empty two dimensional list of Spaces with the given dimensions.
 
@@ -89,10 +89,8 @@ class Board:
         :param ydim: The y dimension of the board
         :type ydim: int
         """
-        for y in range(ydim):
-            board.append([space.Space()])
-            for x in range(xdim-1):
-                board[y].append(space.Space())
+        for location in range(ydim * xdim):
+            gameboard.append(space.Space())
 
     @staticmethod
     def generate_bomb_loc(num_bomb, xdim, ydim):
@@ -108,15 +106,15 @@ class Board:
         """
         bomb_loc = list()
         while len(bomb_loc) < num_bomb:
-            xloc = random.randint(0, xdim-1)
-            yloc = random.randint(0, ydim-1)
-            new_loc = (yloc, xloc)
+            xloc = random.randint(0, xdim - 1)
+            yloc = random.randint(0, ydim - 1)
+            new_loc = (xloc, yloc)
             to_add = True
             for location in bomb_loc:
                 if location == new_loc:
                     to_add = False
 
             if to_add:
-                bomb_loc.append((yloc, xloc))
+                bomb_loc.append((xloc, yloc))
         global bomb_locations
         bomb_locations = bomb_loc

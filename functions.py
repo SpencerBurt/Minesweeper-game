@@ -12,39 +12,74 @@ class Functions:
         :type board: Board
         :returns: void
         """
-        for row in board.gameboard:
-            for space in row:
-                print(space, end=" ")
+        for y in range(board.ydim):
+            for x in range(board.xdim):
+                print(board.gameboard[y * board.xdim + x], end= '')
             print()
+            
 
     @staticmethod
     def reveal_space(board:board.Board, xloc:int, yloc:int):
-        space = board.gameboard[yloc][xloc]
-        coordinates = (yloc, xloc)
+        """
+        Decides whether or not to reveal a space on the board given the user's input
+
+        :param board: The board
+        :type board: Board
+        :param xloc: The x location to be checked
+        :type xloc: int
+        :param yloc: The y location to be checked
+        :type yloc: int
+        :returns: void
+        """
+        space = board.gameboard[yloc * board.xdim + xloc]
         if space.is_marked:
             Functions.reveal_marked()
         elif space.is_bomb:
             board.is_lost = True
-            #Functions.lose()
         elif not space.is_hidden:
             Functions.reveal_revealed()
         else:
-            space.is_hidden = False
+            Functions.reveal_zeros(board, xloc, yloc, space)
+            
+    # Note: the function declaration sacrifices some simplicity to avoid having to import the space file, this could be simplified later on if problems arise.
+    @staticmethod
+    def reveal_zeros(board:board.Board, xloc:int, yloc:int, space:board.space.Space):
+        """
+        Reveals a given space. Reveals the surrounding spaces if it is zero.
+
+        :param board: The board
+        :type board: Board
+        :param xloc: The x location of the space being revealed
+        :type xloc: int
+        :param yloc: The y location of the space being revealed
+        :type yloc: int
+        :param space: The space being revealed, determined by the reveal_space function
+        :type space: Space
+        :returns: void
+        """
+        space.is_hidden = False
+        if space.value == 0:
             for y in range(-1,2):
-                if (coordinates[0] + y != -1) and (coordinates[0] + y != board.ydim):
+                if (yloc + y != -1) and (yloc + y != board.ydim):
                     for x in range(-1,2):
-                        if (coordinates[1] + x != -1) and (coordinates[1] + x != board.xdim):
-                            if board.gameboard[coordinates[0]+y][coordinates[1]+x].value == 0:
-                                board.gameboard[coordinates[0]+y][coordinates[1]+x].is_hidden = False
+                        location = board.gameboard[(yloc + y) * board.xdim + (xloc + x)]
+                        if (xloc + x != -1) and (xloc + x != board.xdim) and not location.is_bomb:
+                            location.is_hidden = False
 
     @staticmethod
-    def lose():
-        print("You lose!")
+    def check_won(board:board.Board):
+        is_won = True
+        for yloc in range(board.ydim):
+            for xloc in range(board.xdim):
+                location = board.gameboard[yloc * board.xdim + xloc]
+                if location.is_hidden and not location.is_bomb:
+                    is_won = False
+        board.is_won = is_won
 
     @staticmethod
     def reveal_marked():
-        print("Space is marked, unmark it to reveal.")
+        print('Space is marked, unmark it to reveal.')
 
     @staticmethod
     def reveal_revealed():
-        print("Space is already revealed.")
+        print('Space is already revealed.')
