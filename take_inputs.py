@@ -18,36 +18,26 @@ def main():
         if first_y > (ydim - 1):
             print('Please enter a value less than ' + ydim)
 
-    Functions.reveal_space(gameboard, int(first_x), int(first_y))
-    
-    while not gameboard.is_won:
-        Functions.print_board(gameboard)
-        move = input('[R] Reveal    [M] Mark    [Q] Quit\n')
-        if move.capitalize() == "R":
-            xloc = int(input('Enter x location: \n'))
-            yloc = int(input('Enter y location: \n'))
-            if xloc >= xdim or yloc >= ydim:
-                print('Incorrect input, space is out of bounds')
-                continue
-            Functions.reveal_space(gameboard, xloc, yloc)
-        elif move.capitalize() == 'Q':
-            break
-        elif move.capitalize() == 'M':
-            xloc = int(input('Enter x location: \n'))
-            yloc = int(input('Enter y location: \n'))
-            gameboard.mark_space(xloc, yloc)
-        else:
-            print('Please enter a valid move')
-            continue
+    if not Functions.reveal_space(gameboard, int(first_x), int(first_y)):
+        print('Tough luck! You hit a bomb, restarting...', end='')
+        main()
+
+    while Functions.move(gameboard):
+        if Functions.check_won(gameboard):
+            print('You Won! ', end='')
+            restart = input('You hit a bomb! Restart?\n[Y] Yes    [N] No\n')
+            if restart.capitalize() == 'Y':
+                main()
+                break
+            else:
+                break
         if gameboard.is_lost:
             restart = input('You hit a bomb! Restart?\n[Y] Yes    [N] No\n')
             if restart.capitalize() == 'Y':
                 main()
             else:
                 break
-        Functions.check_won(gameboard)
-    if gameboard.is_won:
-        print('You Won! ', end='')
+
     print('Thanks for playing!')
 
 if __name__ == "__main__":

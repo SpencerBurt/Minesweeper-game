@@ -29,17 +29,21 @@ class Functions:
         :type xloc: int
         :param yloc: The y location to be checked
         :type yloc: int
-        :returns: void
+        :returns: False if the move results in a loss and True otherwise
         """
         space = board.gameboard[yloc * board.xdim + xloc]
         if space.is_marked:
             Functions.reveal_marked()
+            return True
         elif space.is_bomb:
             board.is_lost = True
+            return False
         elif not space.is_hidden:
             Functions.reveal_revealed()
+            return True
         else:
             Functions.reveal_zeros(board, xloc, yloc, space)
+            return True
             
     # Note: the function declaration sacrifices some simplicity to avoid having to import the space file, this could be simplified later on if problems arise.
     @staticmethod
@@ -68,6 +72,13 @@ class Functions:
 
     @staticmethod
     def check_won(board:board.Board):
+        """
+        Checks if the game has been won.
+
+        :param board: The board
+        :type board: Board
+        :returns: True if the game is won, False otherwise
+        """
         is_won = True
         for yloc in range(board.ydim):
             for xloc in range(board.xdim):
@@ -75,6 +86,73 @@ class Functions:
                 if location.is_hidden and not location.is_bomb:
                     is_won = False
         board.is_won = is_won
+        return is_won
+
+    @staticmethod
+    def reveal(gameboard:board.Board):
+        """
+        Collects input and reveals a space based upon it.
+
+        :param gameboard: The board
+        :type board: Board
+        :returns: False if the move resulted in a loss, True otherwise
+        """
+        revealed = False
+        while not revealed:
+            xloc = int(input('Enter x location: \n'))
+            yloc = int(input('Enter y location: \n'))
+            if (xloc >= gameboard.xdim or yloc >= gameboard.ydim):
+                print('Incorrect input, space is out of bounds')
+                continue
+            if Functions.reveal_space(gameboard, xloc, yloc):
+                return True
+            else:
+                return False
+    
+    @staticmethod
+    def mark(gameboard:board.Board):
+        """
+        Collects input and marks a space based upon it.
+
+        :param gameboard: The board
+        :type gameboard: Board
+        :returns: void
+        """
+        marked = False
+        while not marked:
+            xloc = int(input('Enter x location: \n'))
+            yloc = int(input('Enter y location: \n'))
+            if (xloc >= gameboard.xdim or yloc >= gameboard.ydim):
+                print('Incorrect input, space is out of bounds')
+                continue
+            gameboard.mark_space(xloc, yloc)
+
+    @staticmethod
+    def move(gameboard:board.Board):
+        """
+        Decides and executes the move types dictated by the user.
+
+        :param gameboard: The board
+        :type gameboard: Board
+        :returns: True if the game will continue, false if the given move is the last in the game
+        """
+        Functions.print_board(gameboard)
+        move = input('[R] Reveal    [M] Mark    [Q] Quit\n')
+        if move.capitalize() == "R":
+            if Functions.reveal(gameboard):
+                gameboard.is_lost = False
+                return True
+            else:
+                gameboard.is_lost = True
+                return True
+        elif move.capitalize() == 'Q':
+            return False
+        elif move.capitalize() == 'M':
+            Functions.mark(gameboard)
+            return True
+        else:
+            print('Please enter a valid move')
+            return True
 
     @staticmethod
     def reveal_marked():
